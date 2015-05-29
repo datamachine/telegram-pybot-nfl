@@ -10,7 +10,7 @@ class NflPlugin(plugintypes.TelegramPlugin):
 
 
     patterns = {
-        "^!topqb (20[0-9]{2})", "top_qb",
+        "^!topqb (20[0-9]{2})": "top_qb",
     }
 
     usage = [
@@ -26,12 +26,12 @@ class NflPlugin(plugintypes.TelegramPlugin):
         if year > 2014 or year < 2009:
             return "Only 2009-2014 supported"
 
-        text = "Top QBs:"
+        text = "Top QBs:\n"
         db = nfldb.connect()
         q = nfldb.Query(db)
 
-        q.game(season_year=2012, season_type='Regular')
+        q.game(season_year=year, season_type='Regular')
         for pp in q.sort('passing_yds').limit(5).as_aggregate():
-            text = "{}: {}yds".format(pp.player, pp.passing_yds)
+            text += "{}: {}yds\n".format(pp.player, pp.passing_yds)
 
         return text
