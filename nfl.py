@@ -7,66 +7,31 @@ class NflPlugin(plugintypes.TelegramPlugin):
     """
     Print and query NFL stats using the nflgame library
     """
-    MAX_COUNT = 20
-    DEFAULT_COUNT = 5
 
 
-    patterns = [
-        "^!top([0-9]+)? ([0-9]+)? ?([a-zA-Z]*) ?([0-9]{2,4}) ?(week=([0-9]{1,2}))?"
-    ]
+    patterns = {
+        "^!topqb (20[0-9]{2})", "top_qb",
+    }
 
     usage = [
-        "!top [n] role [year] [week=x]: Print the top n position for the "
-        "season. \nRoles: rushing, passing, receiving, fumbles, kicking, "
-        "punting, kickret, puntret, defense, penalty, touchdowns",
+        "!topqb 20xx: get regular season top 10 qbs for year"
     ]
 
-    roles = ["rushing", "passing", "receiving", "fumbles", "kicking", "punting",
-            "kickret", "puntret", "defense", "penalty", "touchdowns"]
+    def top_qb(self, msg, matches):
+        try:
+            year = int(matches.group(1))
+        except:
+            return "Year is malformed"
 
-    def run(self, msg, matches):
-        if matches.group(0).startswith("!top"):
-            return stats_top(matches.group(1), matches.group(2), matches.group(3), matches.group(5))
+        if year > 2014 or year < 2009:
+            return "Only 2009-2014 supported"
 
-    def stats_top(self, count, role, year, count, week):
-        if role not in roles:
-            return "Role not valid, must be one of :\n{0}".formate(",".join(roles))
+        text = "Top QBs:"
+        db = nfldb.connect()
+        q = nfldb.Query(db)
 
-        if count is None:
-            count = DEFAULT_COUNT
-        elif count > MAX_LIST:
-            count = MAX_LIST
-
-        if year is None:
-            year = 2014 # TODO be dynamic
-
-        if week is None:
-            games = nflgame.games(year)
-        else:
-            games = nflgame.games(year, week=week)
-        players = nflgame.combine_game_stats(games)
-
-        text = "Top {role} leaders:\n".format(role=role)
-        for p in get_role(players, role, count):
-            text += "{player} {carries} carries for {yards} yds and {tds} TDs"
-                    "".format(player=p, carries=p.rushing_att,
-                              yards=p.rushing_yds, tds=p.rushing_tds)
-
+        q.game(season_year=2012, season_type='Regular')
+        for pp in q.sort('passing_yds').limit(5).as_aggregate():
+            text = "{}: {}yds".format(pp.player, pp.passing_yds)
 
         return text
-
-
-    def get_role(self, players, role, count):
-        return {
-            "rushing": players.rushing().sort('rushing_yds').limit(count),
-          "passing": players.passing().sort('passing_att').limit(count),
-            "receiving": players.rushing().sort('rushing_yds').limit(count),
-            "fumbles": players.rushing().sort('rushing_yds').limit(count),
-            "kicking": players.rushing().sort('rushing_yds').limit(count),
-            "punting": players.rushing().sort('rushing_yds').limit(count),
-            "kickret": players.rushing().sort('rushing_yds').limit(count),
-            "puntret": players.rushing().sort('rushing_yds').limit(count),
-            "defense": players.rushing().sort('rushing_yds').limit(count),
-            "penalty": players.rushing().sort('rushing_yds').limit(count),
-            "touchdowns": players.rushing().sort('rushing_yds').limit(count),
-        }[role]
