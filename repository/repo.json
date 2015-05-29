@@ -1,0 +1,9 @@
+{
+    "name": "NFL",
+    "description": "Get nfl data using nflgame/nfldb",
+    "version": "1.0",
+    "default_enable": ["NFL"],
+    "homepage": "https://github.com/datamachine/telegram-pybot-nfl",
+    "repo": "https://github.com/datamachine/telegram-pybot-nfl.git",
+    "branch": "master"
+}

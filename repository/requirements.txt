@@ -1,0 +1,2 @@
+-e git://github.com/surye/nflgame.git#egg=nflgame
+-e git://github.com/surye/nfldb.git#egg=nfldb
