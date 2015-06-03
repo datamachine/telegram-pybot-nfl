@@ -1,10 +1,10 @@
-from telegrambot.plugin import TelegramPlugin
+from telex.plugin import TelexPlugin
 import argparse
 import nflgame
 import nfldb
 
 
-class NflPlugin(TelegramPlugin):
+class NflPlugin(TelexPlugin):
     """
     Print and query NFL stats using the nflgame library
     """
