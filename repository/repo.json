@@ -3,7 +3,7 @@
     "description": "Get nfl data using nflgame/nfldb",
     "version": "1.0",
     "default_enable": ["NFL"],
-    "homepage": "https://github.com/datamachine/telegram-pybot-nfl",
-    "repo": "https://github.com/datamachine/telegram-pybot-nfl.git",
+    "homepage": "https://github.com/datamachine/telex-nfl",
+    "repo": "https://github.com/datamachine/telex-nfl.git",
     "branch": "master"
 }
